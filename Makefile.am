@@ -12,7 +12,7 @@ ACLOCAL_AMFLAGS = -I m4
 test: check
 	$(top_builddir)/src/test/test
 
-ci: test mem-check
+ci: test
 
 code-check:
 	splint +trytorecover src/*.h src/**.c `pkg-config --cflags glib-2.0`

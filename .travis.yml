@@ -15,7 +15,7 @@ before_install:
   - sudo apt-get install splint --quiet --assume-yes
   - sudo apt-get install valgrind --quiet --assume-yes
 
-before_script: 
+before_script:
   - mkdir .deps
   - curl https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.26.tar.bz2 | tar xjf - -C .deps
   - pushd .deps/libgpg-error-1.26 && ./configure && make && sudo make install && popd
@@ -34,3 +34,6 @@ script:
   - export LDFLAGS="-g -ggdb3 -O0"
   - export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
   - ./autogen.sh && ./configure && make ci
+
+after_success:
+  - valgrind --error-exitcode=1 --leak-check=full --suppressions=valgrind.supp src/test/test
