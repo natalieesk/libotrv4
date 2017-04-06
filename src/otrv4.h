@@ -7,6 +7,7 @@
 #include "str.h"
 #include "key_management.h"
 #include "fingerprint.h"
+#include "smp.h"
 #include "tlv.h"
 #include "keys.h"
 
@@ -68,7 +69,9 @@ struct connection {
         otrv4_keypair_t *lt_keypair;
 	key_manager_t keys;
 	otrv4_callbacks_t *callbacks;
-};				//otrv4_t
+
+	smp_state_t smp_state;
+};	//otrv4_t
 
 typedef enum {
 	IN_MSG_NONE = 0,
@@ -120,4 +123,7 @@ otrv4_send_message(string_t * to_send, const string_t message, tlv_t * tlvs,
 
 bool otrv4_close(string_t * to_send, otrv4_t * otr);
 
+tlv_t * otrv4_smp_initiate(otrv4_t *otr);
+
+tlv_t * otrv4_process_smp(otrv4_t * otr, tlv_t * tlv);
 #endif
