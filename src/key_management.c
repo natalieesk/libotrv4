@@ -74,7 +74,7 @@ void key_manager_destroy(key_manager_t *manager) {
   ratchet_free(manager->current);
   manager->current = NULL;
 
-  dh_keypair_destroy(manager->our_dh);
+  dh_pub_key_destroy(manager->our_dh);
 
   dh_mpi_release(manager->their_dh);
   manager->their_dh = NULL;
