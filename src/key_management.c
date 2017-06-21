@@ -74,7 +74,7 @@ void key_manager_destroy(key_manager_t *manager) {
   ratchet_free(manager->current);
   manager->current = NULL;
 
-  dh_pub_key_destroy(manager->our_dh);
+  dh_keypair_destroy(manager->our_dh);
 
   dh_mpi_release(manager->their_dh);
   manager->their_dh = NULL;
@@ -95,7 +95,7 @@ otr4_err_t key_manager_generate_ephemeral_keys(key_manager_t *manager) {
   ecdh_keypair_generate(manager->our_ecdh, sym);
 
   if (manager->i % 3 == 0) {
-    dh_pub_key_destroy(manager->our_dh);
+    dh_keypair_destroy(manager->our_dh);
     if (dh_keypair_generate(manager->our_dh))
       return OTR4_ERROR;
 
@@ -429,10 +429,6 @@ bool key_manager_ensure_on_ratchet(int ratchet_id, key_manager_t *manager) {
   manager->i = ratchet_id;
   if (enter_new_ratchet(manager))
     return false;
-
-  if (manager->i % 3 == 0) {
-    dh_priv_key_destroy(manager->our_dh);
-  }
 
   return true;
 }

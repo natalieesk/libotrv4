@@ -56,8 +56,7 @@ void test_key_manager_destroy() {
   key_manager_destroy(manager);
 
   otrv4_assert(!manager->current);
-  otrv4_assert(manager->our_dh->priv);
-
+  otrv4_assert(!manager->our_dh->priv);
   otrv4_assert(!manager->our_dh->pub);
   otrv4_assert(!manager->their_dh);
 
