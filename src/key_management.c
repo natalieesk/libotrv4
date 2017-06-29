@@ -17,6 +17,7 @@ ratchet_t *ratchet_new() {
 
   memset(ratchet->root_key, 0, sizeof(root_key_t));
 
+  ratchet->id = 0;
   ratchet->chain_a->id = 0;
   memset(ratchet->chain_a->key, 0, sizeof(chain_key_t));
   ratchet->chain_a->next = NULL;
@@ -174,6 +175,7 @@ otr4_err_t key_manager_new_ratchet(key_manager_t *manager,
   if (derive_ratchet_keys(ratchet, shared))
     return OTR4_ERROR;
 
+  ratchet->id = manager->i;
   ratchet_free(manager->current);
   manager->current = ratchet;
 
