@@ -176,7 +176,6 @@ otr4_err_t key_manager_new_ratchet(key_manager_t *manager,
     return OTR4_ERROR;
 
   ratchet->id = manager->i;
-  ratchet_free(manager->current);
   manager->current = ratchet;
 
   return OTR4_SUCCESS;
