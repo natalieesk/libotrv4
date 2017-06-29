@@ -66,7 +66,7 @@ static inline void key_manager_set_their_dh(dh_public_key_t their,
 
 otr4_err_t key_manager_generate_ephemeral_keys(key_manager_t *manager);
 
-otr4_err_t key_manager_ratcheting_init(int j, key_manager_t *manager);
+otr4_err_t key_manager_ratchetting_init(int j, key_manager_t *manager);
 
 void key_manager_set_their_keys(ec_point_t their_ecdh, dh_public_key_t their_dh,
                                 key_manager_t *manager);
@@ -92,9 +92,9 @@ void derive_message_keys(m_enc_key_t enc_key, m_mac_key_t mac_key,
 int key_manager_get_sending_chain_key(chain_key_t sending,
                                       const key_manager_t *manager);
 
-otr4_err_t key_manager_get_receiving_chain_key(chain_key_t receiving,
-                                               int message_id,
-                                               const key_manager_t *manager);
+otr4_err_t
+key_manager_get_receiving_chain_key_by_id(chain_key_t receiving, int message_id,
+                                          const key_manager_t *manager);
 
 otr4_err_t calculate_shared_secret(shared_secret_t dst, const k_ecdh_t k_ecdh,
                                    const mix_key_t mix_key);
