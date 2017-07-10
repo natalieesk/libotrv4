@@ -46,6 +46,7 @@ otr4_err_t ecdh_shared_secret(uint8_t *shared, size_t shared_bytes,
                               const ec_point_t their_pub) {
   decaf_448_point_t s;
   decaf_448_point_scalarmul(s, their_pub, our_priv->priv);
+
   return ec_point_serialize(shared, shared_bytes, s);
 }
 
@@ -70,8 +71,9 @@ void ec_scalar_deserialize(ec_scalar_t scalar,
 
 otr4_err_t ec_point_serialize(uint8_t *dst, size_t dst_len,
                               const ec_point_t point) {
-  if (dst_len < ED448_POINT_BYTES)
+  if (dst_len < ED448_POINT_BYTES) {
     return OTR4_ERROR;
+  }
 
   decaf_448_point_mul_by_cofactor_and_encode_like_eddsa(dst, point);
 

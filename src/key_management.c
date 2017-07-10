@@ -106,15 +106,12 @@ otr4_err_t key_manager_generate_ephemeral_keys(key_manager_t *manager) {
   memset(sym, 0, ED448_PRIVATE_BYTES);
   random_bytes(sym, ED448_PRIVATE_BYTES);
 
-  // just on case
-  ec_point_destroy(manager->our_ecdh->pub);
+  ecdh_keypair_destroy(manager->our_ecdh);
   ecdh_keypair_generate(manager->our_ecdh, sym);
-  ec_scalar_destroy(manager->our_ecdh->priv);
 
   if (manager->i % 3 == 0) {
     // TODO: check this
-    // dh_pub_key_destroy(manager->our_dh);
-    dh_keypair_destroy(manager->our_dh);
+    dh_pub_key_destroy(manager->our_dh);
     if (dh_keypair_generate(manager->our_dh))
       return OTR4_ERROR;
 
@@ -407,10 +404,10 @@ static otr4_err_t enter_new_ratchet(key_manager_t *manager) {
   k_ecdh_t k_ecdh;
   shared_secret_t shared;
 
-  if (ecdh_shared_secret(k_ecdh, sizeof(k_ecdh_t), manager->our_ecdh,
-                         manager->their_ecdh))
+  if (ecdh_shared_secret(k_ecdh, ED448_POINT_BYTES, manager->our_ecdh,
+                         manager->their_ecdh)) {
     return OTR4_ERROR;
-  // TODO: Securely delete our_ecdh.secret.
+  }
 
   otr4_err_t err = calculate_mix_key(manager);
   if (err)
@@ -452,7 +449,9 @@ static otr4_err_t rotate_keys(key_manager_t *manager) {
   if (key_manager_generate_ephemeral_keys(manager))
     return OTR4_ERROR;
 
-  return enter_new_ratchet(manager);
+  otr4_err_t err = enter_new_ratchet(manager);
+
+  return err;
 }
 
 bool key_manager_ensure_on_ratchet(int ratchet_id, key_manager_t *manager) {
@@ -462,6 +461,8 @@ bool key_manager_ensure_on_ratchet(int ratchet_id, key_manager_t *manager) {
   manager->i = ratchet_id;
   if (enter_new_ratchet(manager))
     return false;
+
+  decaf_448_scalar_destroy(manager->our_ecdh->priv);
 
   if (manager->i % 3 == 0) {
     dh_priv_key_destroy(manager->our_dh);
@@ -491,8 +492,9 @@ otr4_err_t key_manager_retrieve_receiving_message_keys(
   chain_key_t receiving;
 
   if (key_manager_get_receiving_chain_key_by_id(receiving, ratchet_id,
-                                                message_id, manager))
+                                                message_id, manager)) {
     return OTR4_ERROR;
+  }
 
   if (!derive_encription_and_mac_keys(enc_key, mac_key, receiving)) {
     return OTR4_ERROR;

@@ -1005,12 +1005,15 @@ static otr4_err_t get_receiving_msg_keys(m_enc_key_t enc_key,
                                          m_mac_key_t mac_key,
                                          const data_message_t *msg,
                                          otrv4_t *otr) {
-  if (!key_manager_ensure_on_ratchet(msg->ratchet_id, otr->keys))
+  if (!key_manager_ensure_on_ratchet(msg->ratchet_id, otr->keys)) {
     return OTR4_ERROR;
+  }
 
   if (key_manager_retrieve_receiving_message_keys(
-          enc_key, mac_key, msg->ratchet_id, msg->message_id, otr->keys))
+          enc_key, mac_key, msg->ratchet_id, msg->message_id, otr->keys)) {
     return OTR4_ERROR;
+  }
+
   return OTR4_SUCCESS;
 }
 
@@ -1082,6 +1085,7 @@ static otr4_err_t otrv4_receive_data_message(otrv4_response_t *response,
 
     return OTR4_SUCCESS;
   } while (0);
+
 
   free(to_store_mac);
   to_store_mac = NULL;
