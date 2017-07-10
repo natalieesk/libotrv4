@@ -1014,6 +1014,7 @@ static otr4_err_t get_receiving_msg_keys(m_enc_key_t enc_key,
   return OTR4_SUCCESS;
 }
 
+// TODO: set and free mac and enc key
 static otr4_err_t otrv4_receive_data_message(otrv4_response_t *response,
                                              const uint8_t *buff, size_t buflen,
                                              otrv4_t *otr) {
@@ -1301,6 +1302,9 @@ static otr4_err_t send_data_message(string_t *to_send, const uint8_t *message,
   data_message_t *data_msg = NULL;
   m_enc_key_t enc_key;
   m_mac_key_t mac_key;
+
+  memset(enc_key, 0, sizeof(m_enc_key_t));
+  memset(mac_key, 0, sizeof(m_mac_key_t));
 
   size_t serlen = list_len(otr->keys->old_mac_keys) * MAC_KEY_BYTES;
 
