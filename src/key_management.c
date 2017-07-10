@@ -89,7 +89,8 @@ void key_manager_destroy(key_manager_t *manager) {
   dh_mpi_release(manager->their_dh);
   manager->their_dh = NULL;
 
-  ecdh_keypair_destroy(manager->our_ecdh);
+  //ecdh_keypair_destroy(manager->our_ecdh);
+  ec_point_destroy(manager->our_ecdh->pub);
   ec_point_destroy(manager->their_ecdh);
 
   sodium_memzero(manager->mix_key, sizeof(manager->mix_key));
@@ -105,8 +106,10 @@ otr4_err_t key_manager_generate_ephemeral_keys(key_manager_t *manager) {
   memset(sym, 0, ED448_PRIVATE_BYTES);
   random_bytes(sym, ED448_PRIVATE_BYTES);
 
-  ecdh_keypair_destroy(manager->our_ecdh);
+  // just on case
+  ec_point_destroy(manager->our_ecdh->pub);
   ecdh_keypair_generate(manager->our_ecdh, sym);
+  ec_scalar_destroy(manager->our_ecdh->priv);
 
   if (manager->i % 3 == 0) {
     // TODO: check this
